@@ -81,6 +81,24 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            # Install Docker on remote host if not present (Ubuntu/Debian flow)
+            if ! command -v docker >/dev/null 2>&1; then
+              sudo apt-get update
+              sudo apt-get install -y ca-certificates curl gnupg lsb-release
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+              echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+              sudo apt-get update
+              sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+              sudo systemctl enable --now docker || true
+              sudo usermod -aG docker "$USER" || true
+            fi
+
+            # Optional: log in to Docker Hub if token provided (useful for private images)
+            #if [ -n "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" ]; then
+              #echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | sudo docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+            #fi
+
+            # Pull and run the image
             sudo docker pull ${{ env.IMAGE }}
             sudo docker stop knight_app || true
             sudo docker rm knight_app || true
