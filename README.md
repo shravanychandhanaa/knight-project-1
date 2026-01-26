@@ -1,3 +1,5 @@
+[![CI-CD with Security Scans](https://github.com/shravanychandhanaa/knight-project-1/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/shravanychandhanaa/knight-project-1/actions/workflows/ci-cd.yml)
+
 # Knight Secured — CI/CD with Docker & Security Scans
 
 Project demonstrating a secure CI/CD pipeline using GitHub Actions, Docker, Bandit, flake8 and Trivy. The pipeline builds, lints, scans Python code, builds a Docker image, scans the image for CRITICAL vulnerabilities, and deploys to an AWS EC2 VPS via SSH.
